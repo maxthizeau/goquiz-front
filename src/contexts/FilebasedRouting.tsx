@@ -85,8 +85,6 @@ export const FileBasedRoutingProvider = () => {
     })
   }
 
-  console.log(routes)
-
   const router = createBrowserRouter(
     routes.map(({ Element, ...rest }) => ({
       ...rest,

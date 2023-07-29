@@ -12,6 +12,8 @@ const variants: { [key: string]: HTMLDivElement['className'] } = {
 
 type Props = {
   variant?: keyof typeof variants
+  leftIcon?: React.ReactNode
+  rightIcon?: React.ReactNode
 } & (LinkProps | ButtonProps)
 
 type LinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -46,19 +48,23 @@ const LinkButton: React.FC<Props> = ({ children, ...props }) => {
 const Button: React.FC<Props> = ({
   children,
   className,
+  leftIcon,
+  rightIcon,
   variant = 'primary',
   ...props
 }) => {
   return (
     <LinkButton
       className={twMerge(
-        'rounded-lg border-4 border-solid px-4 py-2 text-center font-semibold transition-all hover:shadow-lg hover:ring-2',
+        'flex items-center justify-center gap-2 rounded-lg border-4 border-solid px-4 py-2 text-center font-semibold transition-all hover:shadow-lg hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50',
         variants[variant],
         className
       )}
       {...props}
     >
+      {leftIcon}
       {children}
+      {rightIcon}
     </LinkButton>
   )
 }

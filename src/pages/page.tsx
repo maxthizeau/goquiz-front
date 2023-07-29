@@ -25,7 +25,7 @@ const CustomCard: FC<PropsWithChildren<{ className?: ClassNameValue }>> = ({
 
 const IndexPage: React.FC<Props> = () => {
   return (
-    <div className=" flex h-full w-auto flex-col place-content-center place-items-center rounded-lg bg-transparent p-8 shadow-lg">
+    <div className=" flex w-auto flex-col  place-items-center rounded-lg bg-transparent p-8 shadow-lg">
       <Title className="mb-4 text-sky-100">Question 1/10</Title>
       <Card className=" flex  flex-col justify-center gap-8">
         <div className="flex  w-full flex-wrap justify-between gap-2 ">
