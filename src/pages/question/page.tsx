@@ -1,13 +1,11 @@
+import { ModelCreateQuestionInput } from '@/__generated__/models.types'
 import Button from '@/components/UIKit/Button'
 import Card from '@/components/UIKit/Card'
 import FieldSet from '@/components/UIKit/FieldSet'
 import Input from '@/components/UIKit/Input'
 import Title from '@/components/UIKit/Title'
 import { useFormErrors } from '@/hooks/useFormErrors'
-import {
-  CreateQuestionInput,
-  QuestionRepository,
-} from '@/repository/question/question'
+import { QuestionRepository } from '@/repository/question/question'
 import { useMutation } from '@tanstack/react-query'
 import {
   CheckCircle2,
@@ -84,7 +82,7 @@ const Page: React.FC = () => {
       return
     }
 
-    const input: CreateQuestionInput = {
+    const input: ModelCreateQuestionInput = {
       label: data.Question,
       correct_answers: data.CorrectAnswers.map((answer) => answer.value),
       wrong_answers: data.WrongAnswers.map((answer) => answer.value),

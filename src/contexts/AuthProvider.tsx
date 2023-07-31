@@ -1,11 +1,6 @@
-import {
-  AuthResponse,
-  UserLoginInput,
-  UserRepository,
-  UserSignupInput,
-} from '@/repository/user/user'
+import { UserRepository } from '@/repository/user/user'
 import { UseMutationResult, useMutation } from '@tanstack/react-query'
-import React, { Fragment, createContext } from 'react'
+import React, { createContext } from 'react'
 import cookie from 'js-cookie'
 import { toast } from 'react-toastify'
 import { AxiosError, isAxiosError } from 'axios'
@@ -13,7 +8,13 @@ import {
   GeneralResponse,
   GeneralResponseError,
 } from '@/repository/generalResponse'
-import { Transition } from '@headlessui/react'
+import {
+  ModelAuth,
+  ModelUserLoginInput,
+  ModelUserSignupInput,
+} from '@/__generated__/models.types'
+import { useLoading } from './LoadingProvider'
+import LoadingOverlay from '@/components/UIKit/LoadingOverlay'
 
 type UserContext = {
   username: string
@@ -24,15 +25,15 @@ type AuthContextValue = {
   isAuthenticated: boolean
   user: UserContext | null
   login: UseMutationResult<
-    GeneralResponse<AuthResponse>,
+    GeneralResponse<ModelAuth>,
     AxiosError<GeneralResponseError>,
-    UserLoginInput,
+    ModelUserLoginInput,
     unknown
   >
   signup: UseMutationResult<
-    GeneralResponse<AuthResponse>,
+    GeneralResponse<ModelAuth>,
     AxiosError<GeneralResponseError>,
-    UserSignupInput,
+    ModelUserSignupInput,
     unknown
   >
   logout: () => void
@@ -55,8 +56,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  function successHandler(data: GeneralResponse<AuthResponse>) {
-    if (!data.data.user || !data.data.token) {
+  function successHandler(data: GeneralResponse<ModelAuth>) {
+    if (!data.data.user || !data.data.token || !data.data.user.username) {
       throw new Error('Invalid response')
     }
     setUser({ username: data.data.user.username, token: data.data.token })
@@ -91,7 +92,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data.data.user && data.data.token && data.data.token !== '') {
         setUser({ username: data.data.user.username, token: data.data.token })
         cookie.set('token', data.data.token, { expires: 1 })
-        toast.success('Login successful')
+        // toast.success('Login successful')
       }
     },
   })
@@ -109,29 +110,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     user: user,
     login: loginMutation,
     signup: signupMutation,
-    logout: () => setUser(null),
+    logout: () => {
+      cookie.remove('token')
+      setUser(null)
+    },
   }
 
+  const isLoading = refreshMutation.isPending || !isMounted
   return (
     <AuthContext.Provider value={values}>
-      {/* Loading */}
-      <Transition
-        as={Fragment}
-        show={refreshMutation.isPending || !isMounted}
-        enter="bg-sky-950 transition-opacity duration-[0ms]"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="duration-200 transition-opacity ease-in-out"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <div className="fixed left-0 z-50 flex h-screen w-screen flex-col items-center justify-center bg-sky-950">
-          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-50"></div>
-          <p className="mt-4 font-light text-white">Loading...</p>
-        </div>
-      </Transition>
-
-      {children}
+      <LoadingOverlay active={isLoading} text="Loading user..." />
+      {!isLoading && children}
     </AuthContext.Provider>
   )
 }

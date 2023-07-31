@@ -2,6 +2,7 @@ import Button from '@/components/UIKit/Button'
 import FieldSet from '@/components/UIKit/FieldSet'
 import Input from '@/components/UIKit/Input'
 import { useAuth } from '@/contexts/AuthProvider'
+import { useGuard, useGuardValues } from '@/contexts/Guard'
 import { useFormErrors } from '@/hooks/useFormErrors'
 import React from 'react'
 import { useForm } from 'react-hook-form'
@@ -10,6 +11,7 @@ type Props = unknown
 
 const LoginForm: React.FC<Props> = () => {
   type FormData = { Email: string; Password: string }
+  const { redirect } = useGuardValues()
   const form = useForm<FormData>()
   const {
     register,
@@ -19,10 +21,14 @@ const LoginForm: React.FC<Props> = () => {
   const { login } = useAuth()
 
   const onSubmit = async (data: FormData) => {
-    await login.mutateAsync({
-      email: data.Email,
-      password: data.Password,
-    })
+    await login
+      .mutateAsync({
+        email: data.Email,
+        password: data.Password,
+      })
+      .then(() => {
+        redirect()
+      })
   }
 
   const { ErrorComponent } = useFormErrors({

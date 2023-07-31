@@ -5,6 +5,7 @@ import Card from '@/components/UIKit/Card'
 import LoginForm from './components/LoginForm'
 import SignupForm from './components/SignupForm'
 import { twMerge } from 'tailwind-merge'
+import { useGuardValues } from '@/contexts/Guard'
 
 type Props = unknown
 type TabIndex = 'login' | 'signup'
@@ -27,6 +28,7 @@ const tabs: Tab[] = [
 const AuthForm: React.FC<Props> = () => {
   const [tab, setTab] = React.useState<TabIndex>('login')
   const { isAuthenticated, user, logout } = useAuth()
+  const { message } = useGuardValues()
 
   if (isAuthenticated && user) {
     return (
@@ -59,6 +61,7 @@ const AuthForm: React.FC<Props> = () => {
           )
         })}
       </menu>
+      {message && <p className="text-center text-sm text-red-500">{message}</p>}
       {tab === 'login' ? <LoginForm /> : <SignupForm />}
     </Card>
   )

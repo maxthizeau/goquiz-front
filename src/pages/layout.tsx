@@ -1,7 +1,5 @@
 import Button from '@/components/UIKit/Button'
 import { useAuth } from '@/contexts/AuthProvider'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import axios from 'axios'
 import { FC, ReactNode } from 'react'
 
 interface IProps {
@@ -17,7 +15,7 @@ const menus = {
   ],
   loggedIn: [
     {
-      href: '/quiz/create',
+      href: '/game/create',
       text: 'Create a quiz',
     },
     {
@@ -47,8 +45,9 @@ const RootLayout: FC<IProps> = ({ children }) => {
   return (
     <div className="flex h-screen w-screen flex-col items-start justify-center gap-4 bg-sky-950 px-12 py-8 sm:px-24 sm:py-12 ">
       <div className="flex w-full  justify-center gap-4 p-4 text-lg font-bold text-white">
-        {selectedMenu.map(({ href, text }) => (
+        {selectedMenu.map(({ href, text }, index) => (
           <Button
+            key={index}
             asLink
             href={href}
             variant={'none'}
